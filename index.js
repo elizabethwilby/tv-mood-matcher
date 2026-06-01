@@ -1,15 +1,3 @@
-// document.addEventListener("DOMContentLoaded", () => {
-// fetch("https://api.tvmaze.com/shows")
-//   .then(response => response.json())
-//   .then(data => console.log(data))
-
-//   fetch("https://api.tvmaze.com/shows")
-//   .then(response => response.json())
-//   .then(data => {
-//     const allGenres = [...new Set(data.flatMap(show => show.genres))]
-//     console.log(allGenres)
-//   })
-
 const moodGenres = {
   happy: ["Comedy", "Family", "Music"],
   romantic: ["Romance", "Comedy", "Drama", "Western"],
@@ -62,7 +50,6 @@ document.addEventListener("DOMContentLoaded", () => {
        const matchingShows = data.filter(show => 
          show.genres.some(genre => genres.includes(genre))
     )
-    // console.log(matchingShows)
     displayedShows = matchingShows.slice(0, 6)
     showQueue = matchingShows.slice(6)
     
@@ -74,8 +61,6 @@ document.addEventListener("DOMContentLoaded", () => {
         const card = createCard(show)
         recsContainer.appendChild(card)
     })
-    // console.log(displayedShows)
-    // console.log(showQueue)
   })
  })
 
