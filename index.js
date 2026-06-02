@@ -1,70 +1,107 @@
 const moodGenres = {
-  happy: ["Comedy", "Family", "Music"],
-  romantic: ["Romance", "Comedy", "Drama", "Western"],
-  spooky: ["Horror", "Thriller", "Supernatural"],
-  adventurous: ["Adventure", "Action", "Fantasy", "Western", "Sports"],
-  emotional: ["Drama", "Family", "Romance", "Western", "Legal", "Sports"],
-  sad: ["Drama", "Romance", "History"],
-  sleepy: ["Family", "Music", "Romance", "Comedy"],
-  funny: ["Comedy"],
-  crazy: ["Thriller", "Action", "Supernatural", 'Anime'],
-  intense: ["Action", "Thriller", "Espionage", "Legal", "Western", "Sports"],
-  angry: ["Action", "Crime", "War", "Western", "Anime"],
-  curious: ["Science-Fiction", "Mystery", "Medical", "Legal", "Sports"],
-  tired: ["Comedy", "Family"],
-  jealous: ["Drama", "Romance", "Crime", "Legal"]
+  happy: ['Comedy', 'Family', 'Music'],
+  romantic: ['Romance', 'Comedy', 'Drama', 'Western'],
+  spooky: ['Horror', 'Thriller', 'Supernatural', 'Science-Fiction'],
+  adventurous: ['Adventure', 'Action', 'Fantasy', 'Western', 'Sports', 'Science-Fiction'],
+  emotional: ['Drama', 'Family', 'Romance', 'Western', 'Legal', 'Sports'],
+  sad: ['Drama', 'Romance', 'History'],
+  sleepy: ['Family', 'Music', 'Romance', 'Comedy'],
+  funny: ['Comedy'],
+  crazy: ['Thriller', 'Action', 'Supernatural', 'Anime'],
+  intense: ['Action', 'Thriller', 'Espionage', 'Legal', 'Western', 'Sports'],
+  angry: ['Action', 'Crime', 'War', 'Western', 'Anime'],
+  curious: ['Science-Fiction', 'Mystery', 'Medical', 'Legal', 'Sports'],
+  tired: ['Comedy', 'Family'],
+  jealous: ['Drama', 'Romance', 'Crime', 'Legal']
+}
+
+function removeHtmlTags(str) {
+  if (!str) return '';
+  return str.replace(/<[^>]*>/g, '');
 }
 
 function createCard(show) {
-  const card = document.createElement("div")
-  
-  const title = document.createElement("h2")
-  title.textContent = show.name
-  const img = document.createElement("img")
-  img.src = show.image.medium
+  const card = document.createElement('div')
+  card.className = 'card'
 
   
-  card.appendChild(img)
-  card.appendChild(title)
-  
+  const imageContainer = document.createElement('div')
+  imageContainer.className = 'image-container'
+
+  const imageFront = document.createElement('div')
+  imageFront.className = 'image-front'
+  imageFront.style.backgroundImage = `url(${show.image ? show.image.medium : ''})`
+
+  const imageBack = document.createElement('div')
+  imageBack.className = 'image-back'
+
+  const summary = document.createElement('p')
+  summary.textContent = removeHtmlTags(show.summary)
+
+  imageBack.appendChild(summary)
+  imageContainer.appendChild(imageFront)
+  imageContainer.appendChild(imageBack)
+
+  const cardInfo = document.createElement('div')
+  cardInfo.className = 'card-info'
+
+  const title = document.createElement('h2')
+  title.textContent = show.name
+
+  const genres = document.createElement('p')
+  genres.textContent = show.genres.join(', ')
+
+  const rating = document.createElement('p')
+  rating.textContent = `Rating: ${show.rating.average || 'N/A'}`
+
+  const language = document.createElement('p')
+  language.textContent = `Language: ${show.language}`
+
+  const status = document.createElement('p')
+  status.textContent = `Status: ${show.status}`
+
+  cardInfo.appendChild(title)
+  cardInfo.appendChild(genres)
+  cardInfo.appendChild(rating)
+  cardInfo.appendChild(language)
+  cardInfo.appendChild(status)
+
+  imageContainer.addEventListener('mouseover', () => {
+    imageContainer.style.transform = 'rotateY(180deg)'
+  })
+  imageContainer.addEventListener('mouseout', () => {
+    imageContainer.style.transform = 'rotateY(0deg)'
+  })
+
+  card.appendChild(imageContainer)
+  card.appendChild(cardInfo)
   return card
 }
 
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener('DOMContentLoaded', () => {
   const form = document.getElementById('mood-form')
-
-  form.addEventListener("submit", (event) => {
+  form.addEventListener('submit', (event) => {
     event.preventDefault()
-    const selectedMood = document.getElementById("mood").value
-    console.log(selectedMood)
-
+    const selectedMood = document.getElementById('mood').value
     const genres = moodGenres[selectedMood]
-    // console.log(genres)
-
     let displayedShows = []
     let showQueue = []
-
-    fetch("https://api.tvmaze.com/shows")
-     .then(response => response.json())
-     .then(data => {
-       const matchingShows = data.filter(show => 
-         show.genres.some(genre => genres.includes(genre))
-    )
-    displayedShows = matchingShows.slice(0, 6)
-    showQueue = matchingShows.slice(6)
-    
-    const recsContainer = document.getElementById('recs')
-    while (recsContainer.firstChild) {
-       recsContainer.removeChild(recsContainer.firstChild)
-    }
-    displayedShows.forEach(show => {
-        const card = createCard(show)
-        recsContainer.appendChild(card)
-    })
+    fetch('https://api.tvmaze.com/shows')
+      .then(response => response.json())
+      .then(data => {
+        const matchingShows = data.filter(show =>
+          show.genres.some(genre => genres.includes(genre))
+        )
+        displayedShows = matchingShows.slice(0, 6)
+        showQueue = matchingShows.slice(6)
+        const recsContainer = document.getElementById('recs')
+        while (recsContainer.firstChild) {
+          recsContainer.removeChild(recsContainer.firstChild)
+        }
+        displayedShows.forEach(show => {
+          const card = createCard(show)
+          recsContainer.appendChild(card)
+        })
+      })
   })
- })
-
 })
-
-
-
