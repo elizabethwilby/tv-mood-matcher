@@ -1,0 +1,48 @@
+.cards {
+  display: grid;
+  grid-template-columns: repeat(3, 250px);
+  gap: 1.5rem;
+  margin-top: 1.5rem;
+}
+
+.card {
+  width: 250px;
+  perspective: 1000px;
+  cursor: pointer;
+}
+
+.image-container {
+  position: relative;
+  width: 100%;
+  height: 300px;
+  transform-style: preserve-3d;
+  transition: transform 0.7s ease;
+}
+
+.image-front, .image-back {
+  position: absolute;
+  inset: 0;
+  backface-visibility: hidden;
+  border: 1px solid #d4ccbc;
+}
+
+.image-front {
+  background-size: cover;
+  background-position: center;
+  width: flex;
+  align-items: flex-end;
+}
+
+.card-overlay {
+  width: 100%;
+  padding: 1rem;
+  background: linear-gradient(to top, rgba(28,35,51,0.9) 0%, transparent 100%);
+}
+
+
+.image-back {
+  background: #ede8df;
+  transform: rotateY(180deg);
+  padding: 1.5rem;
+  overflow-y: auto;
+}
