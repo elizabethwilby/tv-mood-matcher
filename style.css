@@ -29,20 +29,25 @@
 .image-front {
   background-size: cover;
   background-position: center;
-  width: flex;
-  align-items: flex-end;
 }
-
-.card-overlay {
-  width: 100%;
-  padding: 1rem;
-  background: linear-gradient(to top, rgba(28,35,51,0.9) 0%, transparent 100%);
-}
-
 
 .image-back {
   background: #ede8df;
   transform: rotateY(180deg);
   padding: 1.5rem;
   overflow-y: auto;
+}
+
+.card-info {
+  padding: 0.5rem;
+}
+
+.card-info h2 {
+  font-size: 0.9rem;
+  margin: 0 0 0.3rem 0;
+}
+
+.card-info p {
+  font-size: 0.75rem;
+  margin: 0.2rem 0;
 }
