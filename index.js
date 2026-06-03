@@ -31,6 +31,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const watchListItems = document.getElementById('watchlist-items')
   const form = document.getElementById('mood-form')
   const statusFilter = document.getElementById('status')
+  const ratingFilter = document.getElementById('rating')
   
   function renderShows(shows){
     while (recsContainer.firstChild) {
@@ -44,10 +45,23 @@ document.addEventListener('DOMContentLoaded', () => {
   statusFilter.addEventListener('change', () => {
   const selectedStatus = statusFilter.value
   const filtered = selectedStatus === 'all'
-    ? matchingShows
-    : matchingShows.filter(show => show.status === selectedStatus)
+  ? matchingShows
+  : matchingShows.filter(show => show.status === selectedStatus)
   renderShows(filtered)
 })
+ratingFilter.addEventListener('change', () => {
+  const selectedRating = ratingFilter.value
+  if (selectedRating === 'all'){
+    renderShows(matchingShows)
+  } else if (selectedRating === 'highest') {
+    const sorted = [...matchingShows].sort((a, b) => (b.rating.average || 0) - (a.rating.average || 0))
+    renderShows(sorted)
+  } else if (selectedRating ==='lowest') {
+    const sorted = [...matchingShows].sort((a, b) => (a.rating.average ||0) - (b.rating.average ||0))
+    renderShows(sorted)
+  }
+})
+
 
   function replaceCard(card) {
     card.remove()
@@ -156,33 +170,6 @@ document.addEventListener('DOMContentLoaded', () => {
         showQueue = matchingShows.slice(6)
         renderShows(matchingShows)
       })
-
-
     })
-
 })
-//Stretch 1
-fetch("https://api.tvmaze.com/shows")
-  .then(response => response.json())
-  .then(data => {
-    const status = [...new Set(data.map(show => show.status))]
-    // console.log(status) //ended, running, tbd// if else else, shows the shows under those catagories
-  })
-
-//Stretch 2
-fetch("https://api.tvmaze.com/shows")
-  .then(response => response.json())
-  .then(data => {
-    const rating = [...new Set(data.map(show => show.rating.average))]
-    //console.log(rating) if else, if higher than 8.0 show, if lower null
-  })
-//Stretch 3
-fetch("https://api.tvmaze.com/shows")
-  .then(response => response.json())
-  .then(data => {
-    const allLanguages = [...new Set(data.map(show => show.network?.name))]
-    //console.log(allLanguages)
-    //choose networks, check boxes, show only shows from those networks
-  })
-
 
