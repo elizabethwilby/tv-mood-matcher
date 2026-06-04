@@ -73,15 +73,7 @@ Examples:
 
 ---
 
-## Stretch Goal 3 - Filter Recommendations by Network
-
-User Story: As a user, I want to filter recommendations by network
-
-Details: Users will be able to filter recommendations using the network property returned by the TVMaze API.
-
----
-
-## Stretch Goal 4 - Clear
+## Stretch Goal 3 - Clear
 
 User Story: As a user, I want to reset my recommendations so that I can begin a new search from scratch.
 
