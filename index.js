@@ -21,6 +21,12 @@ function removeHtmlTags(str) {
   return str.replace(/<[^>]*>/g, '');
 }
 
+function clearContainer(container) {
+  while (container.firstChild) {
+    container.removeChild(container.firstChild)
+  }
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   let displayedShows = []
   let showQueue = []
@@ -31,22 +37,53 @@ document.addEventListener('DOMContentLoaded', () => {
   const watchListItems = document.getElementById('watchlist-items')
   const form = document.getElementById('mood-form')
   const statusFilter = document.getElementById('status')
+  const ratingFilter = document.getElementById('rating')
+  const clearButton = document.getElementById('clear')
+  const moodSelect = document.getElementById('mood')
   
   function renderShows(shows){
-    while (recsContainer.firstChild) {
-      recsContainer.removeChild(recsContainer.firstChild)
-    }
+    clearContainer(recsContainer)
     shows.slice(0,6).forEach(show => {
       const card = createCard(show)
       recsContainer.appendChild(card)
     })
   }
+
   statusFilter.addEventListener('change', () => {
   const selectedStatus = statusFilter.value
   const filtered = selectedStatus === 'all'
-    ? matchingShows
-    : matchingShows.filter(show => show.status === selectedStatus)
+  ? matchingShows
+  : matchingShows.filter(show => show.status === selectedStatus)
+  showQueue = filtered.slice(6)
   renderShows(filtered)
+})
+
+ratingFilter.addEventListener('change', () => {
+  const selectedRating = ratingFilter.value
+  if (selectedRating === 'all') {
+    showQueue = matchingShows.slice(6)
+    renderShows(matchingShows)
+  } else if (selectedRating === 'highest') {
+    const sorted = [...matchingShows].sort((a, b) => (b.rating.average || 0) - (a.rating.average || 0))
+    showQueue = sorted.slice(6)
+    renderShows(sorted)
+  } else if (selectedRating ==='lowest') {
+    const sorted = [...matchingShows].sort((a, b) => (a.rating.average ||0) - (b.rating.average ||0))
+    showQueue = sorted.slice(6)
+    renderShows(sorted)
+  }
+})
+
+clearButton.addEventListener('click', () => {
+  clearContainer(recsContainer)
+  clearContainer(watchListItems)
+  moodSelect.selectedIndex = 0
+  displayedShows = []
+  showQueue = []
+  watchList = []
+  matchingShows = []
+  statusFilter.value = 'all'
+  ratingFilter.value = 'all'
 })
 
   function replaceCard(card) {
@@ -143,46 +180,18 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   form.addEventListener('submit', (event) => {
-    event.preventDefault()
-    const selectedMood = document.getElementById('mood').value
-    const genres = moodGenres[selectedMood]
-    fetch('https://api.tvmaze.com/shows')
-      .then(response => response.json())
-      .then(data => {
-          matchingShows = data.filter(show =>
-          show.genres.some(genre => genres.includes(genre))
-        )
-        displayedShows = matchingShows.slice(0, 6)
-        showQueue = matchingShows.slice(6)
-        renderShows(matchingShows)
-      })
-
-
+  event.preventDefault()
+  const selectedMood = moodSelect.value
+  const genres = moodGenres[selectedMood]
+  fetch('https://api.tvmaze.com/shows')
+    .then(response => response.json())
+    .then(data => {
+      matchingShows = data.filter(show =>
+        show.genres.some(genre => genres.includes(genre))
+      )
+      displayedShows = matchingShows.slice(0, 6)
+      showQueue = matchingShows.slice(6)
+      renderShows(matchingShows)
     })
-
+  })
 })
-//Stretch 1
-fetch("https://api.tvmaze.com/shows")
-  .then(response => response.json())
-  .then(data => {
-    const status = [...new Set(data.map(show => show.status))]
-    // console.log(status) //ended, running, tbd// if else else, shows the shows under those catagories
-  })
-
-//Stretch 2
-fetch("https://api.tvmaze.com/shows")
-  .then(response => response.json())
-  .then(data => {
-    const rating = [...new Set(data.map(show => show.rating.average))]
-    //console.log(rating) if else, if higher than 8.0 show, if lower null
-  })
-//Stretch 3
-fetch("https://api.tvmaze.com/shows")
-  .then(response => response.json())
-  .then(data => {
-    const allLanguages = [...new Set(data.map(show => show.network?.name))]
-    //console.log(allLanguages)
-    //choose networks, check boxes, show only shows from those networks
-  })
-
-

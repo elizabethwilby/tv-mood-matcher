@@ -10,6 +10,7 @@
     <h1>Mood Matcher</h1>
     <form id = "mood-form">
     <select id = "mood" name = "mood">
+        <option value="" disabled selected>Select a Mood</option>
         <option value = "happy">Happy</option>
         <option value = "sad">Sad</option>
         <option value = "adventurous">Adventurous</option>
@@ -28,13 +29,19 @@
     <button type= "submit">Search</button>
     <p>Status:</p>
     <select id="status" name="status">
-      <option value="All">All</option>
+      <option value="all">All</option>
       <option value="Running">Running</option>
       <option value="Ended">Ended</option>
       <option value="To Be Determined">TBD</option>
     </select>
-    
+    <p>Sort By Rating:</p>
+    <select id="rating" name="rating">
+      <option value="all">All</option>
+      <option value="highest">Top Rated</option>
+      <option value="lowest">Lowest Rated</option>
+    </select>
     </form>
+    <button id="clear">Clear Search</button>
     <div id="recs" class="cards"></div>
     <div id='watchlist'>
       <h2>My Watchlist:</h2>
