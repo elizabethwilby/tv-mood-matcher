@@ -21,10 +21,10 @@ function removeHtmlTags(str) {
   return str.replace(/<[^>]*>/g, '');
 }
 
-function clearContainer(container) {
+function emptyContainer(container) {
   while (container.firstChild) {
     container.removeChild(container.firstChild)
-  }//rename this
+  }
 }
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -39,58 +39,13 @@ document.addEventListener('DOMContentLoaded', () => {
   const ratingFilter = document.getElementById('rating')
   const clearButton = document.getElementById('clear')
   const moodSelect = document.getElementById('mood')
-  
-  function renderShows(shows){
-    clearContainer(recsContainer)
-    shows.slice(0,6).forEach(show => {
+
+  function renderShows(shows) {
+    emptyContainer(recsContainer)
+    shows.slice(0, 6).forEach(show => {
       const card = createCard(show)
       recsContainer.appendChild(card)
     })
-  }
-
-  statusFilter.addEventListener('change', () => {
-    const selectedStatus = statusFilter.value
-    const filtered = selectedStatus === 'all'
-      ? matchingShows
-      : matchingShows.filter(show => show.status === selectedStatus)
-    showQueue = filtered.slice(6)
-    renderShows(filtered)
-})
-
-  ratingFilter.addEventListener('change', () => {
-    const selectedRating = ratingFilter.value
-    if (selectedRating === 'all') {
-      showQueue = matchingShows.slice(6)
-      renderShows(matchingShows)
-    } else if (selectedRating === 'highest') {
-      const sorted = [...matchingShows].sort((a, b) => (b.rating.average || 0) - (a.rating.average || 0))
-      showQueue = sorted.slice(6)
-      renderShows(sorted)
-    } else if (selectedRating ==='lowest') {
-      const sorted = [...matchingShows].sort((a, b) => (a.rating.average || 0) - (b.rating.average || 0))
-      showQueue = sorted.slice(6)
-      renderShows(sorted)
-    }
-  })
-
-  clearButton.addEventListener('click', () => {
-    clearContainer(recsContainer)
-    clearContainer(watchListItems)
-    moodSelect.selectedIndex = 0
-    showQueue = []
-    watchList = []
-    matchingShows = []
-    statusFilter.value = 'all'
-    ratingFilter.value = 'all'
-  })
-
-  function replaceCard(card) {
-    card.remove()
-    if (showQueue.length > 0) {
-      const nextShow = showQueue.shift()
-      const newCard = createCard(nextShow)
-      recsContainer.appendChild(newCard)
-    }
   }
 
   function createCard(show) {
@@ -177,12 +132,21 @@ document.addEventListener('DOMContentLoaded', () => {
     return card
   }
 
+  function replaceCard(card) {
+    card.remove()
+    if (showQueue.length > 0) {
+      const nextShow = showQueue.shift()
+      const newCard = createCard(nextShow)
+      recsContainer.appendChild(newCard)
+    }
+  }
+
   form.addEventListener('submit', (event) => {
     event.preventDefault()
     const selectedMood = moodSelect.value
     const genres = moodGenres[selectedMood]
 
-    if(!genres) return
+    if (!genres) return
 
     fetch('https://api.tvmaze.com/shows')
       .then(response => response.json())
@@ -193,5 +157,41 @@ document.addEventListener('DOMContentLoaded', () => {
         showQueue = matchingShows.slice(6)
         renderShows(matchingShows)
       })
+  })
+
+  statusFilter.addEventListener('change', () => {
+    const selectedStatus = statusFilter.value
+    const filtered = selectedStatus === 'all'
+      ? matchingShows
+      : matchingShows.filter(show => show.status === selectedStatus)
+    showQueue = filtered.slice(6)
+    renderShows(filtered)
+  })
+
+  ratingFilter.addEventListener('change', () => {
+    const selectedRating = ratingFilter.value
+    if (selectedRating === 'all') {
+      showQueue = matchingShows.slice(6)
+      renderShows(matchingShows)
+    } else if (selectedRating === 'highest') {
+      const sorted = [...matchingShows].sort((a, b) => (b.rating.average || 0) - (a.rating.average || 0))
+      showQueue = sorted.slice(6)
+      renderShows(sorted)
+    } else if (selectedRating === 'lowest') {
+      const sorted = [...matchingShows].sort((a, b) => (a.rating.average || 0) - (b.rating.average || 0))
+      showQueue = sorted.slice(6)
+      renderShows(sorted)
+    }
+  })
+
+  clearButton.addEventListener('click', () => {
+    emptyContainer(recsContainer)
+    emptyContainer(watchListItems)
+    moodSelect.selectedIndex = 0
+    showQueue = []
+    watchList = []
+    matchingShows = []
+    statusFilter.value = 'all'
+    ratingFilter.value = 'all'
   })
 })
